@@ -1,8 +1,8 @@
 from pymongo import MongoClient
 import os
-from dbmenu import *
+#from dbmenu import *
 
-uri = "mongodb+srv://joshmcd:Lilmac11@osu-dynasty.x7hhy.mongodb.net/"
+uri = "mongodb+srv://joshmcd:Lilmac11@osu-dynasty.x7hhy.mongodb.net/?retryWrites=true&w=majority&appName=OSU-Dynasty"
 client = MongoClient(uri)
 # coll name needs to be updated for each team
 # CFB25 and OSU_Players(test)
@@ -12,33 +12,38 @@ coll = db.OSU
 
 # add_player() - Function to add new player
 def add_player():
-    os.system('cls')
-    name = input("Enter player name: ")
-    pos = input("Enter player position: ")
-    tend = input("Enter player archetype: ")
-    home = input("Enter player's Hometown (city, st): ")
-    height = input("Enter player's height (ft'in): ")
-    weight = input("Enter player's weight: ")
-    dev = input("Enter player Development type: ")
-    cla = input("Enter player's Classification: ")
+    while True:
+        os.system('cls')
+        name = input("Enter player name: ")
+        pos = input("Enter player position: ")
+        tend = input("Enter player archetype: ")
+        home = input("Enter player's Hometown (city, st): ")
+        height = input("Enter player's height (ft'in): ")
+        weight = input("Enter player's weight: ")
+        dev = input("Enter player Development type: ")
+        cla = input("Enter player's Classification: ")
     
-    player = {
-        'Name': name,
-        'Position': pos,
-        'Tendency': tend,
-        'Hometown': home,
-        'Height': height,
-        'Weight': weight,
-        'Development': dev,
-        'Class': cla,
-        'Ratings': {},
-        'Stats': {},
-        'Accolades': {},
-        'Abilites': {}
-    }
+        player = {
+            'Name': name,
+            'Position': pos,
+            'Tendency': tend,
+            'Hometown': home,
+            'Height': height,
+            'Weight': weight,
+            'Development': dev,
+            'Class': cla,
+            'Ratings': {},
+            'Stats': {},
+            'Accolades': {},
+            'Abilites': {}
+        }
     
-    coll.insert_one(player)
-    print(f"Player {name} added successfully.")
+        coll.insert_one(player)
+        print(f"Player {name} added successfully.")
+        
+        another = input("Would you like to add another player to this team? (y/n): ").strip().lower()
+        if another != 'y':
+            break
     
 # Function to view all players
 def view_players():
@@ -126,7 +131,7 @@ def update_abilites():
 
 # TODO: Function to add/update accolades for player
 
-# TODO: Function to delete a player from the database
+# Function to delete a player from the database
 def remove_player():
     # Get all players
     players = list(coll.find({}, {'Name': 1, 'Position': 1, 'Tendency': 1, 'Development': 1, 'Class': 1}))
@@ -140,7 +145,7 @@ def remove_player():
             # Prompt User to select a player to remove by index
             player_index = int(input(f"\nSelect a player to remove by number (1-{len(players)}): ")) - 1
             if 0 <= player_index < len(players):
-                selected_player = player[player_index]
+                selected_player = players[player_index]
                 player_name = selected_player.get('Name', 'N/A')
                 
                 # Get confirmation for deletetion
@@ -158,13 +163,24 @@ def remove_player():
     else:
         print("No players found in the database.")
                 
-
 # TODO: Function to update all players class
 
 # TODO: Function to view stats for a specific player
 # TODO: Function to view abilites for a specific player
 # TODO: Function to view accolades for a specifc player
 # TODO: Function to view ratings for a specific player
+
+def menu():
+    print("CFB Recruiting Database")
+    print("-----------------------")
+    print("1. Add Player")
+    print("2. Update Stats")
+    print("3. View Players")
+    print("4. Delete Player")
+    print("5. Exit")
+    
+    choice = input("Enter your Choice: ")
+    return choice
 
 def main():
     while True:
@@ -177,7 +193,7 @@ def main():
         elif choice == '3':
             view_players()          
         elif choice == '4':
-            print("Add accolade not implemented")
+            remove_player()
         elif choice == '5':
             print("Exiting...")
             break
