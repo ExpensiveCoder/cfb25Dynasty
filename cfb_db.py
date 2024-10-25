@@ -1,6 +1,6 @@
 from pymongo import MongoClient
 import os
-#from dbmenu import *
+from dbmenu import *
 
 uri = "mongodb+srv://joshmcd:Lilmac11@osu-dynasty.x7hhy.mongodb.net/?retryWrites=true&w=majority&appName=OSU-Dynasty"
 client = MongoClient(uri)
@@ -89,10 +89,19 @@ def view_players():
         
         print(f"{name} {pos} {tend} {dev} {cla}")
         
-    choice = input("\nDo you want to enter a player? (yes/no): ").lower()
+    choice = playerMenu()
     
-    if choice == 'yes':
+    if choice == '1':
         add_player()
+    elif choice == '2':
+        print("Update Menu goes here")
+    elif choice == '3':
+        remove_player()
+    elif choice == '4':
+        print("Exiting Player View...")
+        main()
+    else:
+        print("Enter a valid choice.")
 
 # Function to add/update stats to a player
 def update_stats():
@@ -170,24 +179,13 @@ def remove_player():
 # TODO: Function to view accolades for a specifc player
 # TODO: Function to view ratings for a specific player
 
-def menu():
-    print("CFB Recruiting Database")
-    print("-----------------------")
-    print("1. Add Player")
-    print("2. Update Stats")
-    print("3. View Players")
-    print("4. Delete Player")
-    print("5. Exit")
-    
-    choice = input("Enter your Choice: ")
-    return choice
 
 def main():
     while True:
         choice = menu()
                 
         if choice == '1':
-            add_player()
+            view_players()
         elif choice == '2':
             update_stats()
         elif choice == '3':
