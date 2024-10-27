@@ -7,8 +7,8 @@ client = MongoClient(uri)
 # coll name needs to be updated for each team
 # CFB25 and OSU_Players(test)
 db = client.CFB25
-# KentSt or OSU and CFB25(test)
-coll = db.OSU
+# KentSt or OSU or Louis and CFB25(test)
+coll = db.Louis
 
 # add_player() - Function to add new player
 def add_player():
@@ -20,8 +20,8 @@ def add_player():
         home = input("Enter player's Hometown (city, st): ")
         height = input("Enter player's height (ft'in): ")
         weight = input("Enter player's weight: ")
-        dev = input("Enter player Development type: ")
         cla = input("Enter player's Classification: ")
+        dev = input("Enter player Development type: ")
     
         player = {
             'Name': name,
@@ -47,6 +47,7 @@ def add_player():
     
 # Function to view all players
 def view_players():
+    os.system('cls')
     # Get all players: Name, Postiion, Tendency, Development, and Current Class
     players = coll.find({}, {'Name': 1, 'Position': 1, 'Tendency': 1, 'Development': 1, 'Class': 1})
     
@@ -56,6 +57,9 @@ def view_players():
     min_tend = 12
     min_dev = 12
     min_class = 10
+    
+    # Roster Size
+    rost_size = 0
     
     # initialize column widths
     name_width = max(len('Name'), min_name)
@@ -86,9 +90,10 @@ def view_players():
         tend = player.get('Tendency', 'N/A').ljust(tend_width)
         dev = player.get('Development', 'N/A').ljust(dev_width)
         cla = player.get('Class', 'N/A').ljust(cla_width)
-        
         print(f"{name} {pos} {tend} {dev} {cla}")
-        
+        rost_size = rost_size + 1
+    
+    print("Roster size: ",rost_size)
     choice = playerMenu()
     
     if choice == '1':
