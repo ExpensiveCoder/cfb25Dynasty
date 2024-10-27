@@ -6,9 +6,9 @@ def menu():
     print("CFB Player Database")
     print("-----------------------")
     print("1. View Players")
-    print("2. ")
-    print("3. ")
-    print("4. ")
+    print("2. Pitch Calculator")
+    print("3. Ability Database")
+    print("4. Export Data")
     print("5. Exit")
     
     choice = input("Enter your choice: ")
