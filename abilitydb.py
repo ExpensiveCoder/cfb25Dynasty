@@ -2,7 +2,9 @@
 
 Ability = {
   "360": {
+    "Type": "Physical",
     "Attribute": "Spin Move",
+    "Archetypes": "Elusive Back, ",
     "Bronze": {
       "Rating": 80,
       "Description": "Slightly improved ability to fake out defenders with Spin moves"
