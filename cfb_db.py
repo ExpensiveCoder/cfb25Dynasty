@@ -144,8 +144,16 @@ def update_abilites():
 
 # TODO: Function to add/update ratings for player (fill ratings category)
 def update_ratings():
+    # Array for rating categories  
+    rating_cat = ['OVR','SPD','ACC','AGI','COD','STR','AWR',
+                  'CAR','BCV','BTK','TRK','SFA','SPM','JKM',
+                  'CTH','CIT','SPC','SRR','MRR','DRR','RLS','JMP',
+                  'THP','SAC','MAC','DAC','RUN','TUP','BSK','PAC',
+                  'PBK','PBP','PBF','RBK','RBP','RBF','LBK','IBL',
+                  'PRC','TAK','POW','BSH','FMV','PMV','PUR','MCV','ZCV','PRS',
+                  'RET','KPW','KAC','STA','TGH','INJ']
     # Get all Players (name, position, overall)
-    players = list(coll.find({}, {'Name': 1, 'Position': 1, 'Ratings.Ovr': 1}))
+    players = list(coll.find({}, {'Name': 1, 'Position': 1, 'Ratings.OVR': 1}))
     
     # Display Players
     if players:
@@ -165,9 +173,7 @@ def update_ratings():
                 
                 # Dictionary for new ratings
                 new_ratings = {}
-                # Array for rating categories
-                rating_cat = []
-                
+              
                 # Prompt for each rating category within ratings
                 for category in rating_cat:
                     try:
@@ -239,7 +245,10 @@ def remove_player():
 # TODO: Function to view stats for a specific player
 # TODO: Function to view abilites for a specific player
 # TODO: Function to view accolades for a specifc player
+
 # TODO: Function to view ratings for a specific player
+def view_ratings():
+    os.system('cls')
 
 
 def main():
@@ -251,9 +260,9 @@ def main():
         elif choice == '2':
             update_stats()
         elif choice == '3':
-            view_players()          
+            print("Pitch Calculator goes here")          
         elif choice == '4':
-            remove_player()
+            print("Ability Database Program goes here")
         elif choice == '5':
             print("Exiting...")
             break
