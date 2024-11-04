@@ -16,7 +16,7 @@ def save_player_json(player):
     
     # Write updated list back to file
     with open(file_path, 'w') as file:
-        json.dump(removed_players, file, indent=4)
+        json.dump(removed_players, file, indent=4, default=str)
         
         
 def save_player_csv(player):
