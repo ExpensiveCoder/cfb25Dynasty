@@ -1,7 +1,7 @@
 from pymongo import MongoClient
 import os
 from dbmenu import *
-from save import save_player_csv, save_player_json
+from save import *
 
 uri = "mongodb+srv://joshmcd:Lilmac11@osu-dynasty.x7hhy.mongodb.net/?retryWrites=true&w=majority&appName=OSU-Dynasty"
 client = MongoClient(uri)
@@ -9,7 +9,7 @@ client = MongoClient(uri)
 # CFB25 and OSU_Players(test)
 db = client.CFB25
 # KentSt or OSU or Louis and CFB25(test)
-coll = db.Louis
+coll = db.OSU
 
 # add_player() - Function to add new player
 def add_player():
@@ -111,38 +111,111 @@ def view_players():
 
 # Function to add/update stats to a player
 def update_stats():
-    name = input("Enter the player who's stats you want to update: ")
-    year = input("Enter the year (e.g., 2024): ")
+    # Defensive Stats array
+    defence = ['Solo','Assists','Total Tackles','TFL','Sack',
+               'Int','Int Yards','Int Long','DEFL','CTHA','FFUMB',
+               'FMBREC','FMBYDS','BLOCK','SFTY','TD']
+    # Get all players (Name, Position, Class)
+    players = list(coll.find({}, {'Name': 1, 'Position': 1, 'Class': 1}))
     
-    while True:
-        category = input("Enter the stat category: ")
-        stat = input(f"Enter the stat value for {category}: ")
-        
-        coll.update_one(
-            {'Name': name},
-            {'$set': {f'Stats.{year}.{category}': int(stat)}}
-        )
-        print(f"Updated {category} for {name} in {year} to {stat}.")
-        
-        repeat = input("Do you want to add another stat for this player and year?: ").strip().lower()
-        if repeat != 'y':
-            break
+    # Display Players
+    if players:
+        print("\n--- Players List ---")
+        for idx, player in enumerate(players, start=1):
+            print(f"{idx}. {player.get('Name', 'N/A')} | {player.get('Position', 'N/A')} | {player.get('Class', 'N/A')}")
+            
+        try:
+            # Prompt user to select player to update
+            player_index = int(input(f"\nSelect a player to update by number (1-{len(players)}): ")) - 1
+            
+            if 0 <= player_index < len(players):
+                selected_player = players[player_index]
+                player_name = selected_player.get('Name', 'N/A')
+                
+                # Prompt for year
+                year = input("Enter the year (e.g., 2024): ").strip()
+                
+                print(f"\nUpdating stats for {player_name} in {year}...")
+                
+                # Dictionary to store new stats
+                new_stats = {}
+                
+                # Prompt for each stat category
+                for category in defence:
+                    try:
+                        stat_value = int(input(f"Enter new value for {category}: "))
+                        new_stats[f'Stats.{year}.{category}'] = stat_value
+                    except ValueError:
+                        print(f"Invalid input for {category}, please enter an integer.")
+                        continue
+                    
+                # Update the player's stats in the database
+                coll.update_one(
+                    {'_id': selected_player['_id']},
+                    {'$set': new_stats}
+                )
+                
+                print(f"{player_name}'s stats for {year} have been updated successfully.")
+            else:
+                print("Invalid player number.")
+        except ValueError:
+            print("Invalid input. Please enter a number.")
+    else:
+        print("No players found in the database.")
 
-# TODO: Function to add/update abilities for player
+# Function to add/update abilities for player
 def update_abilites():
-    name = input("Enter the player who's abilites you want to update: ")
-    year = input("Enter the year (e.g., 2024): ")
+    # Retrieve players with name and position
+    players = list(coll.find({}, {'Name': 1, 'Position': 1, 'Abilities': 1}))
     
-    while True:
-        ability = input("Enter the ability to upgrade: ")
-        
-        # update database with new ability
-        
-        repeat = input("Would you like to update another ability?: ").strip().lower()
-        if repeat != 'y':
-            break
+    if players:
+        print("\n--- Players List ---")
+        for idx, player in enumerate(players, start=1):
+            print(f"{idx}. {player.get('Name', 'N/A')} | {player.get('Postition', 'N/A')}")
+            
+        try:
+            # Select player by index number
+            player_index = int(input(f"\nSelect a player to update abilites by number (1-{len(players)}): ")) - 1
+            if 0 <= player_index < len(players):
+                selected_player = players[player_index]
+                player_name = selected_player.get('Name', 'N/A')
+                
+                # Prompt for the year
+                year = input("Enter the year for the ability update: ").strip()
+                
+                print(f"\nUpdating abilities for {player_name} in {year}.")
+                
+                new_abilities = {}
+                
+                while True:
+                    # Prompt for ability name and rank
+                    ability_name = input("Enter ability name (or 'done' to finish): ").strip()
+                    if ability_name.lower() == 'done':
+                        break
+                    try:
+                        rank = input(f"Enter rank for {ability_name}: ")
+                        new_abilities[f'Abilites.{year}.{ability_name}'] = rank
+                    except ValueError:
+                        print("Invalid input for rank, please enter an integer.")
+                        continue
+                    
+                if new_abilities:
+                    coll.update_one(
+                        {'_id': selected_player['_id']},
+                        {'$set': new_abilities}
+                    )
+                    print(f"{player_name}'s abilities for {year} have been updated successfully.")
+                else:
+                    print("No abilities were updated.")
+            else:
+                print("Invalid player number.")
+        except ValueError:
+            print("Invalid input. Please enter a number.")
+    else:
+        print("No players found in the database.")
 
-# TODO: Function to add/update ratings for player (fill ratings category)
+
+# Function to add/update ratings for player (fill ratings category)
 def update_ratings():
     # Array for rating categories  
     rating_cat = ['OVR','SPD','ACC','AGI','COD','STR','AWR',
@@ -205,7 +278,7 @@ def update_accolades():
 # Function to delete a player from the database
 def remove_player():
     # Get all players
-    players = list(coll.find({}, {'Name': 1, 'Position': 1, 'Tendency': 1, 'Development': 1, 'Class': 1}))
+    players = list(coll.find())
     
     # Display players
     if players:
@@ -260,9 +333,11 @@ def main():
         elif choice == '2':
             update_stats()
         elif choice == '3':
-            print("Pitch Calculator goes here")          
+            print("Pitch Calculator goes here")
+            update_ratings()        
         elif choice == '4':
             print("Ability Database Program goes here")
+            update_abilites()
         elif choice == '5':
             print("Exiting...")
             break
