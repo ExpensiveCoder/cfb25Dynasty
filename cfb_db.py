@@ -2,14 +2,15 @@ from pymongo import MongoClient
 import os
 from dbmenu import *
 from save import *
+from config import *
 
 uri = "mongodb+srv://joshmcd:Lilmac11@osu-dynasty.x7hhy.mongodb.net/?retryWrites=true&w=majority&appName=OSU-Dynasty"
 client = MongoClient(uri)
 # coll name needs to be updated for each team
 # CFB25 and OSU_Players(test)
 db = client.CFB25
-# KentSt or OSU or Louis and CFB25(test)
-coll = db.OSU
+# KentSt or OSU or Louis or SMiss and CFB25(test)
+coll = db.SMiss
 
 # add_player() - Function to add new player
 def add_player():
