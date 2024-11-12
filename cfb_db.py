@@ -116,14 +116,14 @@ def update_stats():
     defence = ['Solo','Assists','Total Tackles','TFL','Sack',
                'Int','Int Yards','Int Long','DEFL','CTHA','FFUMB',
                'FMBREC','FMBYDS','BLOCK','SFTY','TD']
-    # Get all players (Name, Position, Class)
-    players = list(coll.find({}, {'Name': 1, 'Position': 1, 'Class': 1}))
+    # Get all players (Name, Position, Archetype)
+    players = list(coll.find({}, {'Name': 1, 'Position': 1, 'Tendency': 1}))
     
     # Display Players
     if players:
         print("\n--- Players List ---")
         for idx, player in enumerate(players, start=1):
-            print(f"{idx}. {player.get('Name', 'N/A')} | {player.get('Position', 'N/A')} | {player.get('Class', 'N/A')}")
+            print(f"{idx}. {player.get('Name', 'N/A')} | {player.get('Position', 'N/A')} | {player.get('Tendency', 'N/A')}")
             
         try:
             # Prompt user to select player to update
@@ -132,6 +132,7 @@ def update_stats():
             if 0 <= player_index < len(players):
                 selected_player = players[player_index]
                 player_name = selected_player.get('Name', 'N/A')
+                player_pos = selected_player.get('Position', 'N/A')
                 
                 # Prompt for year
                 year = input("Enter the year (e.g., 2024): ").strip()
@@ -141,8 +142,11 @@ def update_stats():
                 # Dictionary to store new stats
                 new_stats = {}
                 
+                # TODO: Take player position (player_pos) and return stat categories for position
+                stat_cat = DEFENSE_STATS
+                
                 # Prompt for each stat category
-                for category in defence:
+                for category in stat_cat:
                     try:
                         stat_value = int(input(f"Enter new value for {category}: "))
                         new_stats[f'Stats.{year}.{category}'] = stat_value
